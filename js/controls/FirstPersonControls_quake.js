@@ -175,14 +175,14 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 		var strafeSpeed  = 0;
 		var upSpeed      = 0;
 
-		if ( this.moveForward  ) forwardSpeed  =  this.movementSpeed;
-		if ( this.moveBackward ) forwardSpeed  = -this.movementSpeed;
+		if ( Input.forward()  ) forwardSpeed  =  this.movementSpeed;
+		if ( Input.backward() ) forwardSpeed  = -this.movementSpeed;
 
-		if ( this.moveRight ) strafeSpeed =  this.movementSpeed;
-		if ( this.moveLeft  ) strafeSpeed = -this.movementSpeed;
+		if ( Input.right() ) strafeSpeed =  this.movementSpeed;
+		if ( Input.left()  ) strafeSpeed = -this.movementSpeed;
 
-		if ( this.moveUp   ) upSpeed =  this.movementSpeed;
-		if ( this.moveDown ) upSpeed = -this.movementSpeed;
+		if ( Input.up()   ) upSpeed =  this.movementSpeed;
+		if ( Input.down() ) upSpeed = -this.movementSpeed;
 
 		var forward = this.forwardVector().clone();
 		var strafe  = this.rightVector().clone();

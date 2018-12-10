@@ -1,6 +1,9 @@
-InputAliases = {
-  "forward": ['W', 'up arrow'],
-  "backward": ['S', 'down arrow'],
-  'Left': ['A', 'left arrow'],
-  'Right':  ['D', 'right arrow']
-};
+
+(function() {
+  Input.alias('forward' , ['W', 'up arrow'   ]);
+  Input.alias('backward', ['S', 'down arrow' ]);
+  Input.alias('left'    , ['A', 'left arrow' ]);
+  Input.alias('right'   , ['D', 'right arrow']);
+  Input.alias('up'      , ['R', 'E'          ]);
+  Input.alias('down'    , ['F', 'Q'          ]);
+})();
