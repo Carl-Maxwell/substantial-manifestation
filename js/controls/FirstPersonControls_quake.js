@@ -23,11 +23,6 @@ class FirstPersonControls {
 		this.mouseX = 0;
 		this.mouseY = 0;
 
-		this.moveForward = false;
-		this.moveBackward = false;
-		this.moveLeft = false;
-		this.moveRight = false;
-
 		if ( this.domElement !== document ) {
 			this.domElement.setAttribute( 'tabindex', - 1 );
 		}
@@ -35,8 +30,8 @@ class FirstPersonControls {
 		//
 		
 		this.domElement.addEventListener('pointerlockchange', (evt) => this.pointerLockChange(evt), false);
-		this.domElement.addEventListener('pointerlockerror', (evt) => this.pointerLockError(evt), false);
-		this.domElement.addEventListener('pointermove', (evt) => this.onMouseMove(evt), false);
+		this.domElement.addEventListener('pointerlockerror' , (evt) => this.pointerLockError(evt) , false);
+		this.domElement.addEventListener('pointermove'      , (evt) => this.onMouseMove(evt)      , false);
 
 		this.domElement.onpointerdown = (event) => {
 			this.pointerLocking = true;
@@ -128,7 +123,5 @@ class FirstPersonControls {
 	dispose () {
 		// TODO dispose of event listeners
 	}
-
-
 }
  
