@@ -141,28 +141,18 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 	};
 
 	this.dispose = function () {
-		this.domElement.removeEventListener( 'pointermove', _onMouseMove, false );
+		// TODO dispose of event listeners
 	};
 
-	var _pointerLockChange = bind( this, this.pointerLockChange );
-	var _pointerLockError  = bind( this, this.pointerLockError );
-	var _onMouseMove       = bind( this, this.onMouseMove );
+	this.domElement.addEventListener('pointerlockchange' , (evt) => this.pointerLockChange(evt), false);
+	this.domElement.addEventListener('pointerlockerror'  , (evt) => this.pointerLockError(evt) , false);
+	this.domElement.addEventListener('pointermove'       , (evt) => this.onMouseMove(evt)      , false);
 
-	this.domElement.addEventListener( 'pointerlockchange', _pointerLockChange, false);
-	this.domElement.addEventListener( 'pointerlockerror', _pointerLockError, false);
-	this.domElement.addEventListener( 'pointermove', _onMouseMove, false );
-
-	this.domElement.onpointerdown = bind(this, function (event) {
+	this.domElement.onpointerdown = (event) => {
 		this.pointerLocking = true;
 
 		event.target.requestPointerLock();
-	});
-
-	function bind( scope, fn ) {
-		return function () {
-			fn.apply( scope, arguments );
-		};
-	}
+	};
 
 	this.handleResize();
 };
