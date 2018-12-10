@@ -76,38 +76,6 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 		}
 	};
 
-	this.onMouseDown = function ( event ) {
-		if ( this.domElement !== document ) {
-			this.domElement.focus();
-		}
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		if ( this.activeLook ) {
-			switch ( event.button ) {
-				case 0: this.moveForward = true; break;
-				case 2: this.moveBackward = true; break;
-			}
-		}
-
-		this.mouseDragOn = true;
-	};
-
-	this.onMouseUp = function ( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		if ( this.activeLook ) {
-			switch ( event.button ) {
-				case 0: this.moveForward = false; break;
-				case 2: this.moveBackward = false; break;
-			}
-		}
-
-		this.mouseDragOn = false;
-	};
-
 	this.pointerLockChange = function ( event ) {
 		this.pointerLocked = this.pointerLocking;
 
@@ -126,46 +94,6 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 
 		this.mouseX = event.movementX;
 		this.mouseY = event.movementY;
-	};
-
-	this.onKeyDown = function ( event ) {
-		// event.preventDefault();
-
-		switch ( event.keyCode ) {
-			case 38: /*up*/
-			case 87: /*W*/ this.moveForward = true; break;
-
-			case 37: /*left*/
-			case 65: /*A*/ this.moveLeft = true; break;
-
-			case 40: /*down*/
-			case 83: /*S*/ this.moveBackward = true; break;
-
-			case 39: /*right*/
-			case 68: /*D*/ this.moveRight = true; break;
-
-			case 82: /*R*/ this.moveUp = true; break;
-			case 70: /*F*/ this.moveDown = true; break;
-		}
-	};
-
-	this.onKeyUp = function ( event ) {
-		switch ( event.keyCode ) {
-			case 38: /*up*/
-			case 87: /*W*/ this.moveForward = false; break;
-
-			case 37: /*left*/
-			case 65: /*A*/ this.moveLeft = false; break;
-
-			case 40: /*down*/
-			case 83: /*S*/ this.moveBackward = false; break;
-
-			case 39: /*right*/
-			case 68: /*D*/ this.moveRight = false; break;
-
-			case 82: /*R*/ this.moveUp = false; break;
-			case 70: /*F*/ this.moveDown = false; break;
-		}
 	};
 
 	this.update = function ( delta ) {
@@ -212,45 +140,23 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 		this.mouseY = 0;
 	};
 
-	function contextmenu( event ) {
-		event.preventDefault();
-	}
-
 	this.dispose = function () {
-		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
-		this.domElement.removeEventListener( 'mousedown', _onMouseDown, false );
-		// this.domElement.removeEventListener( 'mousemove', _onMouseMove, false );
 		this.domElement.removeEventListener( 'pointermove', _onMouseMove, false );
-		this.domElement.removeEventListener( 'mouseup', _onMouseUp, false );
-
-		window.removeEventListener( 'keydown', _onKeyDown, false );
-		window.removeEventListener( 'keyup', _onKeyUp, false );
 	};
 
 	var _pointerLockChange = bind( this, this.pointerLockChange );
 	var _pointerLockError  = bind( this, this.pointerLockError );
 	var _onMouseMove       = bind( this, this.onMouseMove );
-	var _onMouseDown       = bind( this, this.onMouseDown );
-	var _onMouseUp         = bind( this, this.onMouseUp );
-	var _onKeyDown         = bind( this, this.onKeyDown );
-	var _onKeyUp           = bind( this, this.onKeyUp );
 
 	this.domElement.addEventListener( 'pointerlockchange', _pointerLockChange, false);
 	this.domElement.addEventListener( 'pointerlockerror', _pointerLockError, false);
-	this.domElement.addEventListener( 'contextmenu', contextmenu, false );
-	// this.domElement.addEventListener( 'mousemove', _onMouseMove, false );
 	this.domElement.addEventListener( 'pointermove', _onMouseMove, false );
-	this.domElement.addEventListener( 'mousedown', _onMouseDown, false );
-	this.domElement.addEventListener( 'mouseup', _onMouseUp, false );
 
 	this.domElement.onpointerdown = bind(this, function (event) {
 		this.pointerLocking = true;
 
 		event.target.requestPointerLock();
 	});
-
-	window.addEventListener( 'keydown', _onKeyDown, false );
-	window.addEventListener( 'keyup', _onKeyUp, false );
 
 	function bind( scope, fn ) {
 		return function () {
