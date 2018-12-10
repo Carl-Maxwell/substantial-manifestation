@@ -2,71 +2,88 @@
  * @author mrdoob / http://mrdoob.com/
  * @author alteredq / http://alteredqualia.com/
  * @author paulirish / http://paulirish.com/
+ * @author Carl-Maxwell / http://carlmaxwell.ninja/
  */
 
-THREE.FirstPersonControls = function ( camera, domElement ) {
-	this.camera = camera;
-	this.target = new THREE.Vector3( 0, 0, 0 );
+class FirstPersonControls {
+	constructor( camera, domElement ) {
+		this.camera = camera;
+		this.target = new THREE.Vector3( 0, 0, 0 );
 
-	this.domElement = ( domElement !== undefined ) ? domElement : document;
+		this.domElement = ( domElement !== undefined ) ? domElement : document;
 
-	this.pointerLocking;
-	this.pointerLocked = false;
+		this.pointerLocking;
+		this.pointerLocked = false;
 
-	this.enabled = true;
+		this.enabled = true;
 
-	this.movementSpeed = 1.0;
-	this.lookSpeed = 0.25;
-	// this.lookSpeed = 10.0;
+		this.movementSpeed = 1.0;
+		this.lookSpeed = 0.25;
+		// this.lookSpeed = 10.0;
 
-	this.lookVertical = true;
-	this.autoForward = false;
+		this.lookVertical = true;
+		this.autoForward = false;
 
-	this.activeLook = true;
+		this.activeLook = true;
 
-	this.constrainVertical = false;
-	this.verticalMin = 0;
-	this.verticalMax = Math.PI;
+		this.constrainVertical = false;
+		this.verticalMin = 0;
+		this.verticalMax = Math.PI;
 
-	this.mouseX = 0;
-	this.mouseY = 0;
+		this.mouseX = 0;
+		this.mouseY = 0;
 
-	this.lat = 0;
-	this.lon = 0;
-	this.phi = 0;
-	this.theta = 0;
+		this.lat = 0;
+		this.lon = 0;
+		this.phi = 0;
+		this.theta = 0;
 
-	this.moveForward = false;
-	this.moveBackward = false;
-	this.moveLeft = false;
-	this.moveRight = false;
+		this.moveForward = false;
+		this.moveBackward = false;
+		this.moveLeft = false;
+		this.moveRight = false;
 
-	this.mouseDragOn = false;
+		this.mouseDragOn = false;
 
-	this.viewHalfX = 0;
-	this.viewHalfY = 0;
+		this.viewHalfX = 0;
+		this.viewHalfY = 0;
 
-	if ( this.domElement !== document ) {
-		this.domElement.setAttribute( 'tabindex', - 1 );
+		if ( this.domElement !== document ) {
+			this.domElement.setAttribute( 'tabindex', - 1 );
+		}
+		
+		//
+		
+		this.domElement.addEventListener('pointerlockchange', (evt) => this.pointerLockChange(evt), false);
+		this.domElement.addEventListener('pointerlockerror', (evt) => this.pointerLockError(evt), false);
+		this.domElement.addEventListener('pointermove', (evt) => this.onMouseMove(evt), false);
+
+		this.domElement.onpointerdown = (event) => {
+			this.pointerLocking = true;
+
+			event.target.requestPointerLock();
+		};
+
+		this.handleResize();
 	}
 
 	//
 
-	this.forwardVector = function() {
+	forwardVector() {
 		var negativeZ = new THREE.Vector3(0, 0, -1.0);
 
 		return negativeZ.applyQuaternion( this.camera.quaternion );
-	};
+	}
 
-	this.upVector = function() {
+	upVector() {
 		return this.camera.up;
-	};
+	}
 
-	this.rightVector = function() {
+	rightVector() {
 		return this.forwardVector().clone().cross(this.upVector());
-	};
+	}
 
-	this.handleResize = function () {
+	handleResize() {
 		if ( this.domElement === document ) {
 			this.viewHalfX = window.innerWidth / 2;
 			this.viewHalfY = window.innerHeight / 2;
@@ -74,19 +91,19 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 			this.viewHalfX = this.domElement.offsetWidth / 2;
 			this.viewHalfY = this.domElement.offsetHeight / 2;
 		}
-	};
+	}
 
-	this.pointerLockChange = function ( event ) {
+	pointerLockChange( event ) {
 		this.pointerLocked = this.pointerLocking;
 
 		this.pointerLocking = false;
-	};
+	}
 
-	this.pointerLockError = function ( event ) {
+	pointerLockError( event ) {
 		console.log('pointer lock error!');
-	};
+	}
 
-	this.onMouseMove = function ( event ) {
+	onMouseMove( event ) {
 		if (!this.pointerLocked) return;
 
 		let pageX;
@@ -94,9 +111,9 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 
 		this.mouseX = event.movementX;
 		this.mouseY = event.movementY;
-	};
+	}
 
-	this.update = function ( delta ) {
+	update( delta ) {
 		if ( this.enabled === false ) return;
 
 		var forwardSpeed = 0;
@@ -138,21 +155,12 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 
 		this.mouseX = 0;
 		this.mouseY = 0;
-	};
+	}
 
-	this.dispose = function () {
+	dispose () {
 		// TODO dispose of event listeners
-	};
+	}
 
-	this.domElement.addEventListener('pointerlockchange' , (evt) => this.pointerLockChange(evt), false);
-	this.domElement.addEventListener('pointerlockerror'  , (evt) => this.pointerLockError(evt) , false);
-	this.domElement.addEventListener('pointermove'       , (evt) => this.onMouseMove(evt)      , false);
 
-	this.domElement.onpointerdown = (event) => {
-		this.pointerLocking = true;
-
-		event.target.requestPointerLock();
-	};
-
-	this.handleResize();
-};
+}
+ 
