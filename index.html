@@ -176,7 +176,7 @@
 				var geometry = THREE.BufferGeometryUtils.mergeBufferGeometries( geometries );
 				geometry.computeBoundingSphere();
 
-				var texture = new THREE.TextureLoader().load( 'textures/minecraft/atlas.png' );
+				var texture = new THREE.TextureLoader().load( 'textures/atlas.png' );
 				texture.magFilter = THREE.NearestFilter;
 
 				var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide } ) );
