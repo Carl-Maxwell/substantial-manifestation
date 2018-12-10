@@ -19,34 +19,14 @@ class FirstPersonControls {
 
 		this.movementSpeed = 1.0;
 		this.lookSpeed = 0.25;
-		// this.lookSpeed = 10.0;
-
-		this.lookVertical = true;
-		this.autoForward = false;
-
-		this.activeLook = true;
-
-		this.constrainVertical = false;
-		this.verticalMin = 0;
-		this.verticalMax = Math.PI;
 
 		this.mouseX = 0;
 		this.mouseY = 0;
-
-		this.lat = 0;
-		this.lon = 0;
-		this.phi = 0;
-		this.theta = 0;
 
 		this.moveForward = false;
 		this.moveBackward = false;
 		this.moveLeft = false;
 		this.moveRight = false;
-
-		this.mouseDragOn = false;
-
-		this.viewHalfX = 0;
-		this.viewHalfY = 0;
 
 		if ( this.domElement !== document ) {
 			this.domElement.setAttribute( 'tabindex', - 1 );
@@ -63,8 +43,6 @@ class FirstPersonControls {
 
 			event.target.requestPointerLock();
 		};
-
-		this.handleResize();
 	}
 
 	//
@@ -81,16 +59,6 @@ class FirstPersonControls {
 
 	rightVector() {
 		return this.forwardVector().clone().cross(this.upVector());
-	}
-
-	handleResize() {
-		if ( this.domElement === document ) {
-			this.viewHalfX = window.innerWidth / 2;
-			this.viewHalfY = window.innerHeight / 2;
-		} else {
-			this.viewHalfX = this.domElement.offsetWidth / 2;
-			this.viewHalfY = this.domElement.offsetHeight / 2;
-		}
 	}
 
 	pointerLockChange( event ) {
