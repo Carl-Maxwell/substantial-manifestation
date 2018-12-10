@@ -120,6 +120,7 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 
 	this.onMouseMove = function ( event ) {
 		if (!this.pointerLocked) return;
+
 		let pageX;
 		let pageY;
 
@@ -298,11 +299,11 @@ THREE.FirstPersonControls = function ( camera, domElement ) {
 	this.domElement.addEventListener( 'mousedown', _onMouseDown, false );
 	this.domElement.addEventListener( 'mouseup', _onMouseUp, false );
 
-	// this.domElement.onpointerdown = bind(this, function (event) {
-	// 	this.pointerLocking = true;
-	//
-	// 	event.target.requestPointerLock();
-	// });
+	this.domElement.onpointerdown = bind(this, function (event) {
+		this.pointerLocking = true;
+
+		event.target.requestPointerLock();
+	});
 
 	window.addEventListener( 'keydown', _onKeyDown, false );
 	window.addEventListener( 'keyup', _onKeyUp, false );
