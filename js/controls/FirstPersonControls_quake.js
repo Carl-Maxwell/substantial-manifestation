@@ -20,17 +20,25 @@ class FirstPersonControls {
 		this.movementSpeed = 1.0;
 		this.lookSpeed = 0.25;
 
+		this.velocity = new THREE.Vector3(0, 0, 0);
+
+		this.onGround = true;
+		this.canJump = false;
+
 		this.mouseX = 0;
 		this.mouseY = 0;
 
 		if ( this.domElement !== document ) {
 			this.domElement.setAttribute( 'tabindex', - 1 );
 		}
-		
+
+		Keyboard.on(' ', (evt) => this.jump(evt));
+
 		//
-		
+
 		this.domElement.addEventListener('pointerlockchange', (evt) => this.pointerLockChange(evt), false);
 		this.domElement.addEventListener('pointerlockerror' , (evt) => this.pointerLockError(evt) , false);
+		// this.domElement.addEventListener('pointermove'      , (evt) => this.onMouseMove(evt)      , false);
 		this.domElement.addEventListener('pointermove'      , (evt) => this.onMouseMove(evt)      , false);
 
 		this.domElement.onpointerdown = (event) => {
@@ -76,6 +84,50 @@ class FirstPersonControls {
 		this.mouseY = event.movementY;
 	}
 
+	jump( event ) {
+		if (!this.canJump) { return; }
+		this.velocity.y += 400
+		this.canJump = false;
+	}
+
+	floorCheck( offset = new THREE.Vector3(0, 0, 0) ) {
+		// TODO swich from getY to doing a linetrace/collision check
+
+		let position = this.camera.position.clone().add(offset);
+
+		let playerHalfWidth = 50.0;
+
+		// TODO rotate plane with the camera
+
+		// TODO this just doesn't work reliably, not sure what's going on.
+
+		let z1 = getY(
+			Math.floor((position.x-playerHalfWidth)/100) + worldHalfWidth,
+			Math.floor((position.z-playerHalfWidth)/100) + worldHalfDepth
+		);
+		let z2 = getY(
+			Math.floor((position.x-playerHalfWidth)/100) + worldHalfWidth,
+			Math.floor((position.z+playerHalfWidth)/100) + worldHalfDepth
+		);
+		let z3 = getY(
+			Math.floor((position.x+playerHalfWidth)/100) + worldHalfWidth,
+			Math.floor((position.z+playerHalfWidth)/100) + worldHalfDepth
+		);
+		let z4 = getY(
+			Math.floor((position.x+playerHalfWidth)/100) + worldHalfWidth,
+			Math.floor((position.z-playerHalfWidth)/100) + worldHalfDepth
+		);
+
+		let playerHeight = 100;
+
+		return playerHeight + 100*Math.max(z1, z2, z3, z4);
+	}
+
+	land() {
+		this.canJump = true;
+
+	}
+
 	update( delta ) {
 		if ( this.enabled === false ) return;
 
@@ -92,15 +144,43 @@ class FirstPersonControls {
 		if ( Input.up()   ) upSpeed =  this.movementSpeed;
 		if ( Input.down() ) upSpeed = -this.movementSpeed;
 
-		var forward = this.forwardVector().clone();
-		var strafe  = this.rightVector().clone();
+		var forward = this.forwardVector().clone().setComponent(1, 0).normalize();
+		var strafe  = this.rightVector().clone().setComponent(1, 0).normalize();
 		var up      = this.upVector().clone();
 
 		forward.multiplyScalar(forwardSpeed * delta);
 		strafe.multiplyScalar(strafeSpeed * delta);
 		up.multiplyScalar(upSpeed * delta);
 
-		this.camera.position.add(forward).add(strafe).add(up);
+		let ledgeMargin = 20
+
+		let check = this.floorCheck((new THREE.Vector3(0, 0, 0)).add(forward).add(strafe));
+		if (check-ledgeMargin < this.camera.position.y) {
+			this.camera.position.add(forward).add(strafe).add(up);
+		}
+
+		this.camera.position.add(this.velocity.clone().multiplyScalar(delta));
+
+		//
+		// check if you're on the floor, apply gravity
+		//
+
+		let z = this.floorCheck();
+
+		if (this.camera.position.y > z) {
+			this.velocity.y -= 10;
+			this.onGround = false;
+			this.canJump = false;
+		} else {
+			this.camera.position.setComponent(1, z);
+			this.velocity.y = 0;
+			if (!this.onGround) {
+				this.land();
+				this.onGround = true
+			}
+		}
+
+		//
 
 		var yawScale = -this.mouseX * (delta * this.lookSpeed);
 
@@ -124,4 +204,3 @@ class FirstPersonControls {
 		// TODO dispose of event listeners
 	}
 }
- 
