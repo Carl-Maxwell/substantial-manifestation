@@ -34,6 +34,8 @@ class FirstPersonControls {
 
 		Keyboard.on(' ', (evt) => this.jump(evt));
 
+		Keyboard.on('G', (evt) => this.drawDebug(evt));
+
 		//
 
 		this.domElement.addEventListener('pointerlockchange', (evt) => this.pointerLockChange(evt), false);
@@ -90,42 +92,58 @@ class FirstPersonControls {
 		this.canJump = false;
 	}
 
+	drawDebug( evt ) {
+		let position = this.camera.position.clone(); // TODO add offset
+
+		let playerHalfWidth = 25.0;
+
+		// TODO rotate plane with the camera
+
+		drawDebugSphere([position.x, position.y, position.z], 0xFF0000)
+
+		drawDebugSphere([position.x-playerHalfWidth, position.y, position.z-playerHalfWidth])
+		drawDebugSphere([position.x-playerHalfWidth, position.y, position.z+playerHalfWidth])
+		drawDebugSphere([position.x+playerHalfWidth, position.y, position.z+playerHalfWidth])
+		drawDebugSphere([position.x+playerHalfWidth, position.y, position.z-playerHalfWidth])
+
+		drawDebugSphere([position.x+50, position.y, position.z+50], 0x00FF00)
+	}
+
 	floorCheck( offset = new THREE.Vector3(0, 0, 0) ) {
 		// TODO swich from getY to doing a linetrace/collision check
 
 		let position = this.camera.position.clone().add(offset);
 
-		let playerHalfWidth = 50.0;
+		let playerHalfWidth = 5.0;
 
-		// TODO rotate plane with the camera
+		// TODO rotate plane with the camera?
 
-		// TODO this just doesn't work reliably, not sure what's going on.
+		let cubeOffset = 50;
 
 		let z1 = getY(
-			Math.floor((position.x-playerHalfWidth)/100) + worldHalfWidth,
-			Math.floor((position.z-playerHalfWidth)/100) + worldHalfDepth
+			Math.floor((position.x-playerHalfWidth+cubeOffset)/100) + worldHalfWidth,
+			Math.floor((position.z-playerHalfWidth+cubeOffset)/100) + worldHalfDepth
 		);
 		let z2 = getY(
-			Math.floor((position.x-playerHalfWidth)/100) + worldHalfWidth,
-			Math.floor((position.z+playerHalfWidth)/100) + worldHalfDepth
+			Math.floor((position.x-playerHalfWidth+cubeOffset)/100) + worldHalfWidth,
+			Math.floor((position.z+playerHalfWidth+cubeOffset)/100) + worldHalfDepth
 		);
 		let z3 = getY(
-			Math.floor((position.x+playerHalfWidth)/100) + worldHalfWidth,
-			Math.floor((position.z+playerHalfWidth)/100) + worldHalfDepth
+			Math.floor((position.x+playerHalfWidth+cubeOffset)/100) + worldHalfWidth,
+			Math.floor((position.z+playerHalfWidth+cubeOffset)/100) + worldHalfDepth
 		);
 		let z4 = getY(
-			Math.floor((position.x+playerHalfWidth)/100) + worldHalfWidth,
-			Math.floor((position.z-playerHalfWidth)/100) + worldHalfDepth
+			Math.floor((position.x+playerHalfWidth+cubeOffset)/100) + worldHalfWidth,
+			Math.floor((position.z-playerHalfWidth+cubeOffset)/100) + worldHalfDepth
 		);
 
-		let playerHeight = 100;
+		let playerHeight = 125;
 
 		return playerHeight + 100*Math.max(z1, z2, z3, z4);
 	}
 
 	land() {
 		this.canJump = true;
-
 	}
 
 	update( delta ) {

@@ -46,6 +46,8 @@
 		<script src="js/inputAliases.js"></script>
 		<script src="js/keyboard.js"></script>
 
+		<script src="js/debug.js"></script>
+
 		<script src="js/controls/FirstPersonControls_quake.js"></script>
 
 		<script src="js/utils/BufferGeometryUtils.js"></script>
@@ -65,15 +67,22 @@
 
 			var camera, controls, scene, renderer;
 
-			var worldWidth = 128, worldDepth = 128;
+			var worldWidth = 256, worldDepth = 256;
 			var worldHalfWidth = worldWidth / 2;
 			var worldHalfDepth = worldDepth / 2;
 			var data = generateHeight( worldWidth, worldDepth );
 
 			var clock = new THREE.Clock();
 
+			const objects = [];
+
 			init();
 			animate();
+
+			function addToScene(obj) {
+				objects.push(obj)
+				scene.add(obj)
+			}
 
 			function init() {
 				container = document.getElementById( 'container' );
@@ -169,7 +178,7 @@
 				texture.magFilter = THREE.NearestFilter;
 
 				var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide } ) );
-				scene.add( mesh );
+				addToScene( mesh );
 
 				var ambientLight = new THREE.AmbientLight( 0xcccccc );
 				scene.add( ambientLight );
